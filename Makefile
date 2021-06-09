@@ -5,6 +5,8 @@ test:
 
 cleancache:
 	rm ./account-data/$(account)/**/{$(files)}.json
+cleancacheall:
+	rm -rf ./account-data/$(account)/
 collect:
 	python3 cloudmapper.py collect --account $(account) --profile $(profile)
 prepare:
@@ -15,3 +17,4 @@ webserver:
 	python3 cloudmapper.py webserver
 weball: prepare report webserver
 remake: cleancache collect weball
+remakeall: cleancacheall collect weball
