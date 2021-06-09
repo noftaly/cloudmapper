@@ -412,6 +412,7 @@ def get_resource_nodes(region, outputfilter):
 
 
 def build_data_structure(account_data, config, outputfilter):
+    outputfilter["regions"] = '"eu-west-3"'
     cytoscape_json = []
 
     if outputfilter.get("mute", False):

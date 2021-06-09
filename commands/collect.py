@@ -225,7 +225,7 @@ def collect(arguments):
         if default_region not in regions_filter:
             regions_filter.append(default_region)
 
-    session_data = {"region_name": default_region}
+    session_data = {"region_name": "eu-west-3"}
 
     if arguments.profile_name:
         session_data["profile_name"] = arguments.profile_name
