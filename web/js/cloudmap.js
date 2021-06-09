@@ -34,7 +34,7 @@ window.addEventListener("keydown", function(e) {
 $(window).on('load', function(){
     NProgress.set(0.1);
     akkordion(".akkordion", {});
-    
+
     $.when(
         $.getJSON("./data.json"),
         $.getJSON("./style.json")
@@ -80,14 +80,14 @@ function loadCytoscape(options) {
         cy.edges().on('tap', function( e ){
             // This function is just to get us to directtap
             var eventIsDirect = e.target.same( this ); // don't use 2.x cyTarget
-            
+
             if( eventIsDirect ){
                 this.emit('directtap');
             }
         }).on('directtap', function( e ){
             // An edge has been click on
             ni.describe(this);
-            
+
             e.stopPropagation();
         });
         console.log("Setting edge actions");
@@ -106,7 +106,7 @@ function loadCytoscape(options) {
         fisheye: true,
         animate: true
     });
-    
+
     // Add pan and zoom UI control
     cy.panzoom({
         panSpeed: 5,
@@ -227,9 +227,9 @@ function loadCytoscape(options) {
         randomizeLayout();
     });
 
-    //In below functions, finding the nodes to hide/show are sample specific. 
-    //If the sample graph changes, those calculations may also need a change.   
-    
+    //In below functions, finding the nodes to hide/show are sample specific.
+    //If the sample graph changes, those calculations may also need a change.
+
     $("#hide").click(function (){
         hideSelectedNodes();
     });
@@ -239,9 +239,9 @@ function loadCytoscape(options) {
         var nodesWithHiddenNeighbor = cy.nodes("[thickBorder]");
         actions.push({name: "thinBorder", param: nodesWithHiddenNeighbor});
         actions.push({name: "show", param: cy.elements()});
-        ur.do("batch", actions);                    
+        ur.do("batch", actions);
     });
-    
+
 
     $("#showHiddenNeighbors").click(function () {
         // Not used, as you can double-click on a node to see this.
@@ -253,10 +253,10 @@ function loadCytoscape(options) {
         actions.push({name: "show", param: hiddenEles.union(hiddenEles.parent())});
         nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(":hidden").difference(hiddenEles.nodes()))
             .connectedNodes().intersection(hiddenEles.nodes());
-        actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor}); 
-        cy.undoRedo().do("batch", actions);                
+        actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor});
+        cy.undoRedo().do("batch", actions);
     });
-    
+
 
     // Double-tapping a node makes it's hidden neighbors reappear
     var tappedBefore;
@@ -273,7 +273,7 @@ function loadCytoscape(options) {
         } else {
             tappedBefore = tappedNow;
         }
-    });  
+    });
     cy.on('doubleTap', 'node', function (event) {
         var hiddenEles = cy.$(":selected").neighborhood().filter(':hidden');
         var actions = [];
@@ -283,7 +283,7 @@ function loadCytoscape(options) {
         actions.push({name: "show", param: hiddenEles.union(hiddenEles.parent())});
         nodesWithHiddenNeighbor = hiddenEles.nodes().edgesWith(cy.nodes(":hidden").difference(hiddenEles.nodes()))
             .connectedNodes().intersection(hiddenEles.nodes());
-        actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor}); 
+        actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor});
         cy.undoRedo().do("batch", actions);
         setEdgeActions();
     });
@@ -304,7 +304,7 @@ function loadCytoscape(options) {
         var text = $("#toSearch").val();
         cy.elements().search(text).highlightNeighbors();
     });
-                
+
     // Undo redo
     document.addEventListener("keydown", function (e) {
         if (e.ctrlKey){
@@ -322,18 +322,27 @@ function loadCytoscape(options) {
     cy.nodes().on('tap', function( e ){
         // This function is just to get us to directtap
         var eventIsDirect = e.target.same( this ); // don't use 2.x cyTarget
-        
+
         if( eventIsDirect ){
             this.emit('directtap');
         }
     }).on('directtap', function( e ){
         // A node has been click on
         ni.describe(this);
-        
+
         e.stopPropagation();
     });
 
     setEdgeActions();
+
+    // Show ports
+    for (const [i, edge] of Object.entries(cy.edges())) {
+        if (edge._private) {
+            const id = `#${cy.edges()[i]._private.data.id}`;
+            const content = [...new Set(edge._private.data.node_data.map(d => d.GroupName))].join(', ');
+            cy.$(id).css({ content });
+        }
+    }
 
     //
     // Handle hotkeys
@@ -344,19 +353,19 @@ function loadCytoscape(options) {
     Mousetrap.bind('right', function(e) { cy.panBy({x: -10, y:0}); return false; });
     Mousetrap.bind('up', function(e) { cy.panBy({x: 0, y:10}); return false; });
     Mousetrap.bind('down', function(e) { cy.panBy({x: 0, y:-10}); return false; });
-    
+
     // Zoom
-    Mousetrap.bind(['-', '_'], function() { 
+    Mousetrap.bind(['-', '_'], function() {
         cy.zoom( {
             level: cy.zoom()*0.9,
             renderedPosition: { x: cy.width()/2, y: cy.height()/2 }
-        }); 
+        });
     });
     Mousetrap.bind(['=', '+'], function() {
         cy.zoom( {
             level: cy.zoom()*1.2,
             renderedPosition: { x: cy.width()/2, y: cy.height()/2 }
-        }); 
+        });
     });
 
     // Collapse selected nodes
@@ -401,14 +410,14 @@ function loadCytoscape(options) {
 }
 
 function hideSelectedNodes() {
-    var actions = [];                    
-    var nodesToHide = cy.$(":selected").add(cy.$(":selected").nodes().descendants());                  
+    var actions = [];
+    var nodesToHide = cy.$(":selected").add(cy.$(":selected").nodes().descendants());
     var nodesWithHiddenNeighbor = cy.edges(":hidden").connectedNodes().intersection(nodesToHide);
     actions.push({name: "thinBorder", param: nodesWithHiddenNeighbor});
-    actions.push({name: "hide", param: nodesToHide});                    
+    actions.push({name: "hide", param: nodesToHide});
     nodesWithHiddenNeighbor = nodesToHide.neighborhood(":visible")
         .nodes().difference(nodesToHide).difference(cy.nodes("[thickBorder]"));
-    actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor}); 
+    actions.push({name: "thickenBorder", param: nodesWithHiddenNeighbor});
     cy.undoRedo().do("batch", actions);
 }
 

@@ -16,7 +16,8 @@
             "curve-style": "unbundled-bezier",
             "control-point-distances": 20,
             "control-point-weights": 0.5,
-            "target-arrow-shape": "triangle"
+            "target-arrow-shape": "triangle",
+            "label": " "
         }
     },
     {
@@ -26,7 +27,7 @@
             "line-color": "#444",
             "curve-style": "unbundled-bezier",
             "target-arrow-shape": "none",
-            "label": "data(key)"
+            "label": " "
         }
     },
 
