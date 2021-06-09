@@ -902,6 +902,8 @@ class Connection(object):
     _target = None
     _json = None
 
+    _is_double = False
+
     @property
     def source(self):
         return self._source
@@ -909,6 +911,14 @@ class Connection(object):
     @property
     def target(self):
         return self._target
+
+    @property
+    def is_double(self):
+        return self._is_double
+
+    @is_double.setter
+    def is_double(self, value):
+        self._is_double = value
 
     def __key(self):
         return (self._source.arn, self._target.arn)
@@ -929,7 +939,7 @@ class Connection(object):
             "data": {
                 "source": self._source.arn,
                 "target": self._target.arn,
-                "type": "edge",
+                "type": "doubleedge" if self._is_double else "edge",
                 "node_data": self._json,
             }
         }

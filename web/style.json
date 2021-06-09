@@ -11,13 +11,22 @@
     {
         "selector": "edge",
         "style": {
-            "width": 5,
             "opacity": 0.8,
-            "line-color": "#888",
+            "line-color": "#999",
             "curve-style": "unbundled-bezier",
             "control-point-distances": 20,
             "control-point-weights": 0.5,
             "target-arrow-shape": "triangle"
+        }
+    },
+    {
+        "selector": "[type = \"doubleedge\"]",
+        "style": {
+            "width": 5,
+            "line-color": "#444",
+            "curve-style": "unbundled-bezier",
+            "target-arrow-shape": "none",
+            "label": "data(key)"
         }
     },
 

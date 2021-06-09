@@ -567,6 +567,19 @@ def build_data_structure(account_data, config, outputfilter):
                 r.extend(reasons)
                 connections[c] = r
 
+    # Find connections that are two-ways
+    connections_to_remove = set()
+    for c1, reasons in connections.items():
+        if c1 in connections_to_remove:
+            continue
+        for c2, reasons in connections.items():
+            if c1.source == c2.target and c1.target == c2.source:
+                connections_to_remove.add(c2)
+                c1.is_double = True
+                break
+    for connection in connections_to_remove:
+        del connections[connection]
+
     #
     # Collapse CIDRs
     #
