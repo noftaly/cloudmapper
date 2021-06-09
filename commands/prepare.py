@@ -503,7 +503,7 @@ def build_data_structure(account_data, config, outputfilter):
 
                     vpc_children_to_remove = set()
                     for vpc_child in vpc.children:
-                        if vpc_child.has_leaves:
+                        if vpc_child.has_leaves or vpc_child.node_type == "igw":
                             if outputfilter.get("azs", False):
                                 cytoscape_json.append(vpc_child.cytoscape_data())
                             elif vpc_child.node_type != "az":
