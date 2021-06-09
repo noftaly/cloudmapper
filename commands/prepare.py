@@ -496,24 +496,41 @@ def build_data_structure(account_data, config, outputfilter):
         if region.has_leaves:
             cytoscape_json.append(region.cytoscape_data())
 
+            region_children_to_remove = set()
             for vpc in region.children:
                 if vpc.has_leaves:
                     cytoscape_json.append(vpc.cytoscape_data())
 
+                    vpc_children_to_remove = set()
                     for vpc_child in vpc.children:
-                        if outputfilter.get("azs", False):
-                            cytoscape_json.append(vpc_child.cytoscape_data())
-                        elif vpc_child.node_type != "az":
-                            # Add VPC children that are not AZs, such as Gateway endpoints
-                            cytoscape_json.append(vpc_child.cytoscape_data())
+                        if vpc_child.has_leaves:
+                            if outputfilter.get("azs", False):
+                                cytoscape_json.append(vpc_child.cytoscape_data())
+                            elif vpc_child.node_type != "az":
+                                # Add VPC children that are not AZs, such as Gateway endpoints
+                                cytoscape_json.append(vpc_child.cytoscape_data())
 
-                        for subnet in vpc_child.children:
-                            cytoscape_json.append(subnet.cytoscape_data())
+                            az_children_to_remove = set()
+                            for subnet in vpc_child.children:
+                                if subnet.has_leaves:
+                                    cytoscape_json.append(subnet.cytoscape_data())
 
-                            for leaf in subnet.leaves:
-                                cytoscape_json.append(
-                                    leaf.cytoscape_data(subnet.arn)
-                                )
+                                    for leaf in subnet.leaves:
+                                        cytoscape_json.append(
+                                            leaf.cytoscape_data(subnet.arn)
+                                        )
+                                else:
+                                    az_children_to_remove.add(subnet)
+                            for subnet in az_children_to_remove:
+                                vpc_child.removeChild(subnet)
+                        else:
+                            vpc_children_to_remove.add(vpc_child)
+                    for az in vpc_children_to_remove:
+                        vpc.removeChild(az)
+                else:
+                    region_children_to_remove.add(vpc)
+            for vpc in region_children_to_remove:
+                region.removeChild(vpc)
 
         log("- {} nodes built in region {}".format(len(nodes), region.local_id))
 
