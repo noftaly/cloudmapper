@@ -273,6 +273,19 @@ class Az(Node):
         super(Az, self).__init__(parent, json_blob)
 
 
+class Igw(Node):
+    def __init__(self, parent, json_blob):
+        self._local_id = json_blob["InternetGatewayId"]
+        self._arn = "arn:aws::{}:{}:internet-gateway/{}".format(
+            parent.region.local_id,
+            parent.account.local_id,
+            self._local_id,
+        )
+        self._name = get_name(json_blob, "InternetGatewayId")
+        self._type = "igw"
+        super(Igw, self).__init__(parent, json_blob)
+
+
 class Subnet(Node):
     def __init__(self, parent, json_blob):
         # arn:aws:ec2:region:account-id:subnet/subnet-id

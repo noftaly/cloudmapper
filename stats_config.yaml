@@ -128,3 +128,7 @@
   query: .logGroups|length
   source: logs-describe-log-groups
   verbose: true
+- name: Internet Gateways
+  query: '[.InternetGateways[]?.Attachments[]?|select(.State == "available")]|length'
+  source: describe-internet-gateways
+  verbose: true

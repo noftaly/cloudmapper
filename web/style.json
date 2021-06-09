@@ -142,6 +142,15 @@
         }
     },
     {
+        "selector": "[type = \"igw\"]",
+        "css": {
+            "border-color": "#A166FF",
+            "border-style": "dashed",
+            "background-opacity": 0,
+            "background-image": "./icons/aws/internetgateway.svg"
+        }
+    },
+    {
         "selector": "[type = \"subnet\"]",
         "css": {
             "border-color": "#ff5959",

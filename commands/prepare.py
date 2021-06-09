@@ -35,6 +35,7 @@ from shared.common import get_account, get_regions, is_external_cidr
 from shared.query import query_aws, get_parameter_file
 from shared.nodes import (
     Account,
+    Igw,
     Region,
     Vpc,
     Az,
@@ -97,6 +98,12 @@ def get_subnets(az):
         '.Subnets[] | select(.VpcId == "{}") | select(.AvailabilityZone == "{}")'
     )
     return pyjq.all(resource_filter.format(az.vpc.local_id, az.local_id), subnets)
+
+
+def get_igws(vpc):
+    igws = query_aws(vpc.account, "ec2-describe-internet-gateways", vpc.region)
+    resource_filter = '.InternetGateways[] | select(.Attachments != null) | select(.Attachments[] | (.VpcId == "{}"))'.format(vpc.local_id)
+    return pyjq.all(resource_filter, igws)
 
 
 def get_ec2s(region):
@@ -439,6 +446,11 @@ def build_data_structure(account_data, config, outputfilter):
                     subnet = Subnet(parent, subnet_json)
                     az.addChild(subnet)
                 vpc.addChild(az)
+
+            for igw_json in get_igws(vpc):
+                igw = Igw(vpc, igw_json)
+                vpc.addChild(igw)
+
             region.addChild(vpc)
         account.addChild(region)
 
