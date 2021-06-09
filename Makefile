@@ -13,7 +13,5 @@ report:
 	python3 cloudmapper.py report --config config.json --account $(account)
 webserver:
 	python3 cloudmapper.py webserver
-open: # macOS only
-	open http://127.0.0.1:8000
 weball: prepare report webserver
 remake: cleancache collect weball
