@@ -10,6 +10,7 @@ import boto3
 import yaml
 import pyjq
 import urllib.parse
+from tqdm import tqdm
 from botocore.exceptions import ClientError, EndpointConnectionError, NoCredentialsError
 from shared.common import get_account, custom_serializer
 from botocore.config import Config
@@ -68,7 +69,7 @@ def call_function(outputfile, handler, method_to_call, parameters, check, summar
     data = None
     if os.path.isfile(outputfile):
         # Data already collected, so skip
-        print("  Response already collected at {}".format(outputfile), flush=True)
+        tqdm.write("  \033[34mResponse already collected\033[00m at {}".format(outputfile))
         return
 
     call_summary = {
@@ -77,7 +78,7 @@ def call_function(outputfile, handler, method_to_call, parameters, check, summar
         "parameters": parameters,
     }
 
-    print("  Making call for {}".format(outputfile), flush=True)
+    tqdm.write("  \033[92mMaking call\033[00m for {}".format(outputfile))
     try:
         for retries in range(MAX_RETRIES):
             if handler.can_paginate(method_to_call):
@@ -88,7 +89,7 @@ def call_function(outputfile, handler, method_to_call, parameters, check, summar
                     if not data:
                         data = response
                     else:
-                        print("  ...paginating", flush=True)
+                        tqdm.write("  ...paginating")
                         for k in data:
                             if isinstance(data[k], list):
                                 data[k].extend(response[k])
@@ -105,7 +106,7 @@ def call_function(outputfile, handler, method_to_call, parameters, check, summar
                             check["Name"], check["Value"]
                         )
                     )
-                print("  Sleeping and retrying")
+                tqdm.write("  Sleeping and retrying")
                 time.sleep(3)
             else:
                 break
@@ -113,73 +114,73 @@ def call_function(outputfile, handler, method_to_call, parameters, check, summar
     except ClientError as e:
         if "NoSuchBucketPolicy" in str(e):
             # This error occurs when you try to get the bucket policy for a bucket that has no bucket policy, so this can be ignored.
-            print("  - No bucket policy")
+            tqdm.write("  - \033[93mNo bucket policy\033[0m")
         elif "NoSuchPublicAccessBlockConfiguration" in str(e):
             # This error occurs when you try to get the account Public Access Block policy for an account that has none, so this can be ignored.
-            print("  - No public access block set")
+            tqdm.write("  - \033[93mNo public access block set\033[0m")
         elif (
             "ServerSideEncryptionConfigurationNotFoundError" in str(e)
             and call_summary["service"] == "s3"
             and call_summary["action"] == "get_bucket_encryption"
         ):
-            print("  - No encryption set")
+            tqdm.write("  - \033[93mNo encryption set\033[0m")
         elif (
             "NoSuchEntity" in str(e)
             and call_summary["action"] == "get_account_password_policy"
         ):
-            print("  - No password policy set")
+            tqdm.write("  - \033[93mNo password policy set\033[0m")
         elif (
             "AccessDeniedException" in str(e)
             and call_summary["service"] == "organizations"
             and call_summary["action"] == "list_accounts"
         ):
-            print("  - Denied, which likely means this is not the organization root")
+            tqdm.write("  - \033[93mDenied\033[0m, which likely means this is not the organization root")
         elif (
             "RepositoryPolicyNotFoundException" in str(e)
             and call_summary["service"] == "ecr"
             and call_summary["action"] == "get_repository_policy"
         ):
-            print("  - No policy exists")
+            tqdm.write("  - \033[93mNo policy exists\033[0m")
         elif (
             "ResourceNotFoundException" in str(e)
             and call_summary["service"] == "lambda"
             and call_summary["action"] == "get_policy"
         ):
-            print("  - No policy exists")
+            tqdm.write("  - \033[93mNo policy exists\033[0m")
         elif (
             "AccessDeniedException" in str(e)
             and call_summary["service"] == "kms"
             and call_summary["action"] == "list_key_policies"
         ):
-            print("  - Denied, which should mean this KMS has restricted access")
+            tqdm.write("  - \033[93mDenied\033[0m, which should mean this KMS has restricted access")
         elif (
             "AccessDeniedException" in str(e)
             and call_summary["service"] == "kms"
             and call_summary["action"] == "list_grants"
         ):
-            print("  - Denied, which should mean this KMS has restricted access")
+            tqdm.write("  - \033[93mDenied\033[0m, which should mean this KMS has restricted access")
         elif (
             "AccessDeniedException" in str(e)
             and call_summary["service"] == "kms"
             and call_summary["action"] == "get_key_policy"
         ):
-            print("  - Denied, which should mean this KMS has restricted access")
+            tqdm.write("  - \033[93mDenied\033[0m, which should mean this KMS has restricted access")
         elif (
             "AccessDeniedException" in str(e)
             and call_summary["service"] == "kms"
             and call_summary["action"] == "get_key_rotation_status"
         ):
-            print("  - Denied, which should mean this KMS has restricted access")
+            tqdm.write("  - \033[93mDenied\033[0m, which should mean this KMS has restricted access")
         elif "AWSOrganizationsNotInUseException" in str(e):
-            print(' - Your account is not a member of an organization.')
+            tqdm.write(' - \033[93mYour account is not a member of an organization.\033[0m')
         else:
-            print("ClientError: {}".format(e), flush=True)
+            tqdm.write("\033[31mClientError\033[0m: {}".format(e))
             call_summary["exception"] = e
     except EndpointConnectionError as e:
-        print("EndpointConnectionError: {}".format(e), flush=True)
+        tqdm.write("\033[31mEndpointConnectionError\033[0m: {}".format(e))
         call_summary["exception"] = e
     except Exception as e:
-        print("Exception: {}".format(e), flush=True)
+        tqdm.write("\033[31mException\033[0m: {}".format(e))
         call_summary["exception"] = e
 
     # Remove unused values
@@ -308,11 +309,8 @@ def collect(arguments):
     with open("collect_commands.yaml", "r") as f:
         collect_commands = yaml.safe_load(f)
 
-    for runner in collect_commands:
-        print(
-            "* Getting {}:{} info".format(runner["Service"], runner["Request"]),
-            flush=True,
-        )
+    for runner in tqdm(collect_commands, ascii=True):
+        tqdm.write("\033[01m\033[95m* Getting {}:{} info\033[00m".format(runner["Service"], runner["Request"]),)
 
         parameters = {}
         for region in region_list["Regions"]:
@@ -321,23 +319,15 @@ def collect(arguments):
             if runner["Service"] in universal_services:
                 if region["RegionName"] != default_region:
                     continue
-            elif region["RegionName"] not in session.get_available_regions(
-                runner["Service"]
-            ):
-                print(
-                    "  Skipping region {}, as {} does not exist there".format(
-                        region["RegionName"], runner["Service"]
-                    )
-                )
+            elif region["RegionName"] not in session.get_available_regions(runner["Service"]):
+                tqdm.write("  \033[93mSkipping\033[00m region {}, as {} does not exist there".format(region["RegionName"], runner["Service"]))
                 continue
             handler = session.client(
                 runner["Service"], region_name=region["RegionName"],
                 config=Config(retries={'max_attempts': arguments.max_attempts})
             )
 
-            filepath = "account-data/{}/{}/{}-{}".format(
-                account_dir, region["RegionName"], runner["Service"], runner["Request"]
-            )
+            filepath = "account-data/{}/{}/{}-{}".format(account_dir, region["RegionName"], runner["Service"], runner["Request"])
 
             method_to_call = snakecase(runner["Request"])
 
@@ -358,9 +348,7 @@ def collect(arguments):
                     make_directory(action_path)
 
                     # Read the ecs-list-clusters.json file
-                    list_clusters_file = "account-data/{}/{}/{}".format(
-                        account_dir, region["RegionName"], "ecs-list-clusters.json"
-                    )
+                    list_clusters_file = "account-data/{}/{}/{}".format(account_dir, region["RegionName"], "ecs-list-clusters.json")
 
                     if os.path.isfile(list_clusters_file):
                         with open(list_clusters_file, "r") as f:
@@ -368,9 +356,7 @@ def collect(arguments):
 
                             # For each cluster, read the `ecs list-tasks`
                             for clusterArn in list_clusters["clusterArns"]:
-                                cluster_path = (
-                                    action_path + "/" + urllib.parse.quote_plus(clusterArn)
-                                )
+                                cluster_path = (action_path + "/" + urllib.parse.quote_plus(clusterArn))
                                 make_directory(cluster_path)
 
                                 list_tasks_file = "account-data/{}/{}/{}/{}".format(
@@ -410,17 +396,13 @@ def collect(arguments):
                     make_directory(action_path)
 
                     # Read the regions file
-                    regions_file = "account-data/{}/{}".format(
-                        account_dir, "describe-regions.json"
-                    )
+                    regions_file = "account-data/{}/{}".format(account_dir, "describe-regions.json")
                     with open(regions_file, "r") as f:
                         describe_regions = json.load(f)
 
                         # For each region
                         for collect_region in describe_regions["Regions"]:
-                            cluster_path = (
-                                action_path + "/" + urllib.parse.quote_plus(collect_region["RegionName"])
-                            )
+                            cluster_path = (action_path + "/" + urllib.parse.quote_plus(collect_region["RegionName"]))
                             make_directory(cluster_path)
 
                             # Read the VPC file
@@ -461,9 +443,7 @@ def collect(arguments):
 
                 # The dynamic parameter must always be the first value
                 parameter_file = parameters[dynamic_parameter].split("|")[0]
-                parameter_file = "account-data/{}/{}/{}".format(
-                    account_dir, region["RegionName"], parameter_file
-                )
+                parameter_file = "account-data/{}/{}/{}".format(account_dir, region["RegionName"], parameter_file)
 
                 # Get array if a globbing pattern is used (ex. "*.json")
                 parameter_files = glob.glob(parameter_file)
@@ -482,19 +462,12 @@ def collect(arguments):
                             ),
                         }
                         summary.append(call_summary)
-                        print(
-                            "  The file where parameters are obtained from does not exist: {}".format(
-                                parameter_file
-                            ),
-                            flush=True,
-                        )
+                        tqdm.write("  The file where parameters are obtained from does not exist: {}".format(parameter_file),)
                         continue
 
                     with open(parameter_file, "r") as f:
                         parameter_values = json.load(f)
-                        pyjq_parse_string = "|".join(
-                            parameters[dynamic_parameter].split("|")[1:]
-                        )
+                        pyjq_parse_string = "|".join(parameters[dynamic_parameter].split("|")[1:])
                         for parameter in pyjq.all(pyjq_parse_string, parameter_values):
                             filename = get_filename_from_parameter(parameter)
                             identifier = get_identifier_from_parameter(parameter)
