@@ -86,7 +86,7 @@ def get_public_nodes(account, config, use_cache=False):
         "collapse_asgs": True,
         "mute": True,
     }
-    network = build_data_structure(account, config, outputfilter)
+    network, _ = build_data_structure(account, config, outputfilter)
 
     public_nodes = []
     warnings = []
@@ -154,7 +154,7 @@ def get_public_nodes(account, config, use_cache=False):
             )
             # I would need to redo this code in order to get the name of the security group
             public_sgs[sg_group_allowing_all_protocols] = {"public_ports": "0-65535"}
-        
+
         # from_port and to_port mean the beginning and end of a port range
         # We only care about TCP (6) and UDP (17)
         # For more info see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html

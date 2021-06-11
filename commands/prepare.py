@@ -414,6 +414,9 @@ def get_resource_nodes(region, outputfilter):
 def build_data_structure(account_data, config, outputfilter):
     outputfilter["regions"] = '"eu-west-3"'
     cytoscape_json = []
+    datapool = {
+        "sgs": []
+    }
 
     if outputfilter.get("mute", False):
         global MUTE
@@ -427,6 +430,7 @@ def build_data_structure(account_data, config, outputfilter):
     # Iterate through each region and add all the VPCs, AZs, and Subnets
     for region_json in get_regions(account, outputfilter):
         region = Region(account, region_json)
+        datapool['sgs'].extend(query_aws(account, "ec2-describe-security-groups", region)['SecurityGroups'])
 
         # Build the tree hierarchy
         for vpc_json in get_vpcs(region, outputfilter):
@@ -680,12 +684,12 @@ def build_data_structure(account_data, config, outputfilter):
         )
         log("   region, ignoring internal edges, or other filtering.")
 
-    return cytoscape_json
+    return cytoscape_json, datapool
 
 
 def prepare(account, config, outputfilter):
     """Collect the data and write it to a file"""
-    cytoscape_json = build_data_structure(account, config, outputfilter)
+    cytoscape_json, datapool = build_data_structure(account, config, outputfilter)
     if not outputfilter["node_data"]:
         filtered_cytoscape_json=[]
         for node in cytoscape_json:
@@ -694,7 +698,10 @@ def prepare(account, config, outputfilter):
             filtered_cytoscape_json.append(filtered_node)
         cytoscape_json = filtered_cytoscape_json
     with open("web/data.json", "w") as outfile:
-        json.dump(cytoscape_json, outfile, indent=4)
+        json.dump({
+            "dataPool": datapool,
+            "cytoscape": cytoscape_json
+        }, outfile, indent=4)
 
 
 def run(arguments):

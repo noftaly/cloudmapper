@@ -107,7 +107,7 @@ class TestPrepare(unittest.TestCase):
             },
         }
 
-        cytoscape_json = build_data_structure(json_blob, config, outputfilter)
+        cytoscape_json, _ = build_data_structure(json_blob, config, outputfilter)
 
         # Now check it
         # Check number of connections
@@ -167,7 +167,7 @@ class TestPrepare(unittest.TestCase):
 
         # Test without internal edges
         outputfilter["internal_edges"] = False
-        cytoscape_json = build_data_structure(json_blob, config, outputfilter)
+        cytoscape_json, _ = build_data_structure(json_blob, config, outputfilter)
 
         # Check number of connections
         assert_equal(
@@ -177,7 +177,7 @@ class TestPrepare(unittest.TestCase):
         # Test with AZs
         outputfilter["azs"] = True
         outputfilter["internal_edges"] = True
-        cytoscape_json = build_data_structure(json_blob, config, outputfilter)
+        cytoscape_json, _ = build_data_structure(json_blob, config, outputfilter)
 
         # Check number of connections
         assert_equal(
@@ -187,7 +187,7 @@ class TestPrepare(unittest.TestCase):
         # Test with specific VPC name
         outputfilter["azs"] = False
         outputfilter["vpc-names"] = '"Prod"'
-        cytoscape_json = build_data_structure(json_blob, config, outputfilter)
+        cytoscape_json, _ = build_data_structure(json_blob, config, outputfilter)
 
         # Check number of connections
         assert_equal(
