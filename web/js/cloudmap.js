@@ -42,7 +42,7 @@ $(window).on('load', function(){
         loadCytoscape({
             wheelSensitivity: 0.1,
             container: document.getElementById('cy'),
-            elements: datafile[0],
+            elements: datafile[0].cytoscape,
             layout: {
                 name: 'cose-bilkent',
                 nodeDimensionsIncludeLabels: true,
@@ -50,7 +50,7 @@ $(window).on('load', function(){
                 tilingPaddingHorizontal: 100
             },
             style: stylefile[0]
-        });
+        }, datafile[0]);
     })
     .fail(function(e) {
         if (e.status == 404) {
@@ -60,7 +60,7 @@ $(window).on('load', function(){
 }); // Page loaded
 
 
-function loadCytoscape(options) {
+function loadCytoscape(options, { dataPool }) {
     NProgress.set(0.2);
     // Perform the layout
     var cy = window.cy = cytoscape(options);
@@ -242,6 +242,19 @@ function loadCytoscape(options) {
         ur.do("batch", actions);
     });
 
+    $("#hideAllPorts").click(function (){
+        for (const [i, edge] of Object.entries(cy.edges())) {
+            cy.$(`#${edge._private.data.id}`).css({
+                sourceLabel: ' ',
+                targetLabel: ' ',
+            });
+        }
+    });
+
+    $("#showAllPorts").click(function () {
+        showAllPorts(cy, dataPool);
+    });
+
 
     $("#showHiddenNeighbors").click(function () {
         // Not used, as you can double-click on a node to see this.
@@ -335,14 +348,8 @@ function loadCytoscape(options) {
 
     setEdgeActions();
 
-    // Show ports
-    for (const [i, edge] of Object.entries(cy.edges())) {
-        if (edge._private) {
-            const id = `#${cy.edges()[i]._private.data.id}`;
-            const content = [...new Set(edge._private.data.node_data.map(d => d.GroupName))].join(', ');
-            cy.$(id).css({ content });
-        }
-    }
+    // Show Ports
+    showAllPorts(cy, dataPool);
 
     //
     // Handle hotkeys
@@ -421,7 +428,29 @@ function hideSelectedNodes() {
     cy.undoRedo().do("batch", actions);
 }
 
-
+function showAllPorts(cy, dataPool) {
+    for (const edge of Object.values(cy.edges())) {
+        if (edge._private) {
+            const id = `#${edge._private.data.id}`;
+            const sourcePorts = edge._private.source._private.data.node_data?.SecurityGroups
+                ?.flatMap(grp => grp.GroupId)
+                .flatMap(id => dataPool.sgs.find(grp => grp.GroupId === id))
+                .flatMap(grp => grp.IpPermissions)
+                .filter(rule => typeof rule.ToPort !== 'undefined')
+                .flatMap(rule => rule.ToPort);
+            const targetPorts = edge._private.target._private.data.node_data?.SecurityGroups
+                ?.flatMap(grp => grp.GroupId)
+                .flatMap(id => dataPool.sgs.find(grp => grp.GroupId === id))
+                .flatMap(grp => grp.IpPermissions)
+                .filter(rule => typeof rule.ToPort !== 'undefined')
+                .flatMap(rule => rule.ToPort);
+            cy.$(id).css({
+                sourceLabel: sourcePorts?.join(', '),
+                targetLabel: targetPorts?.join(', '),
+            });
+        }
+    }
+}
 
 function importLayout() {
     var f = document.getElementById("fileUpload").files[0];

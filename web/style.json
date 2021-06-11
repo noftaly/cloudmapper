@@ -17,7 +17,14 @@
             "control-point-distances": 20,
             "control-point-weights": 0.5,
             "target-arrow-shape": "triangle",
-            "label": " "
+            "label": " ",
+            "source-label": " ",
+            "source-text-offset": "20px",
+            "target-label": " ",
+            "target-text-offset": "20px",
+            "text-outline-color": "#fff",
+            "text-outline-width": 3,
+            "color": "#000"
         }
     },
     {
@@ -30,7 +37,12 @@
             "target-arrow-color": "#444",
             "source-arrow-shape": "triangle",
             "source-arrow-color": "#444",
-            "label": " "
+            "label": " ",
+            "source-text-offset": "20px",
+            "target-label": " ",
+            "target-text-offset": "20px",
+            "text-outline-width": 3,
+            "color": "#000"
         }
     },
 
