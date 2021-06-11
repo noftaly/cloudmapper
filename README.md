@@ -1,4 +1,4 @@
-# CloudMapper
+# CloudMapper (Cirpack version)
 
 Steps needed to install and use CloudMapper locally.
 To see the original information about the project, see [cloudmapper.md](./CLOUDMAPPER.md).
