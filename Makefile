@@ -9,6 +9,8 @@ cleancacheall:
 	rm -rf ./account-data/$(account)/
 collect:
 	python3 cloudmapper.py collect --account $(account) --profile $(profile)
+collecteu:
+	python3 cloudmapper.py collect --account $(account) --profile $(profile) --regions eu-west-3
 prepare:
 	python3 cloudmapper.py prepare --config config.json --account $(account) --internal-edges --inter-rds-edges
 report:
@@ -17,4 +19,4 @@ webserver:
 	python3 cloudmapper.py webserver
 weball: prepare report webserver
 remake: cleancache collect weball
-remakeall: cleancacheall collect weball
+remakeall: cleancacheall collecteu weball
