@@ -170,13 +170,13 @@ def get_iam_trusts(account, nodes, connections, connections_to_get):
     iam = query_aws(
         account,
         "iam-get-account-authorization-details",
-        Region(account, {"RegionName": "us-east-1"}),
+        Region(account, {"RegionName": "eu-west-3"}),
     )
 
     saml_providers = query_aws(
         account,
         "iam-list-saml-providers",
-        Region(account, {"RegionName": "us-east-1"})
+        Region(account, {"RegionName": "eu-west-3"})
     )["SAMLProviderList"]
 
     for role in pyjq.all(".RoleDetailList[]", iam):
@@ -323,7 +323,7 @@ def get_iam_trusts(account, nodes, connections, connections_to_get):
 
 
 def get_s3_trusts(account, nodes, connections):
-    policy_dir = "./account-data/{}/us-east-1/s3-get-bucket-policy/".format(
+    policy_dir = "./account-data/{}/eu-west-3/s3-get-bucket-policy/".format(
         account.name
     )
     for s3_policy_file in [
@@ -419,7 +419,7 @@ def weboftrust(args, accounts, config):
     for account in accounts:
         # Check if the account data exists
         if not path.exists(
-            "./account-data/{}/us-east-1/iam-get-account-authorization-details.json".format(
+            "./account-data/{}/eu-west-3/iam-get-account-authorization-details.json".format(
                 account["name"]
             )
         ):

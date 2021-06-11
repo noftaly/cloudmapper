@@ -37,7 +37,7 @@ def get_instance_name(instance):
 def amis(args, accounts, config):
     # Loading the list of public images from disk takes a while, so we'll iterate by region
 
-    regions_file = "data/aws/us-east-1/ec2-describe-images.json"
+    regions_file = "data/aws/eu-west-3/ec2-describe-images.json"
     if not os.path.isfile(regions_file):
         raise Exception(
             "You need to download the set of public AMI images.  Run:\n"

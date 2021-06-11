@@ -20,7 +20,7 @@ __description__ = "[proof-of-concept] Check who has access to a resource"
 
 def replace_principal_variables(reference, principal):
     """
-    Given a resource reference string (ie. the Resource string from an IAM policy) and a prinicipal, replace any variables in the resource string that are principal related. 
+    Given a resource reference string (ie. the Resource string from an IAM policy) and a prinicipal, replace any variables in the resource string that are principal related.
     """
     reference = reference.lower()
     for tag in principal.tags:
@@ -253,7 +253,7 @@ def access_check_command(accounts, config, args):
         try:
             file_name = "account-data/{}/{}/{}".format(
                 account["name"],
-                "us-east-1",
+                "eu-west-3",
                 "iam-get-account-authorization-details.json",
             )
             iam = json.load(open(file_name))
@@ -295,7 +295,7 @@ def access_check_command(accounts, config, args):
             # Get IAM boundary
             try:
                 file_name = "account-data/{}/{}/{}/{}".format(
-                    account["name"], "us-east-1", "iam-get-role", role["RoleName"]
+                    account["name"], "eu-west-3", "iam-get-role", role["RoleName"]
                 )
                 get_user_response = json.load(open(file_name))
             except:
@@ -389,7 +389,7 @@ def access_check_command(accounts, config, args):
             # Get IAM boundary
             try:
                 file_name = "account-data/{}/{}/{}/{}".format(
-                    account["name"], "us-east-1", "iam-get-user", user["UserName"]
+                    account["name"], "eu-west-3", "iam-get-user", user["UserName"]
                 )
                 get_user_response = json.load(open(file_name))
             except:
@@ -422,7 +422,7 @@ def access_check_command(accounts, config, args):
 
 def get_managed_policy(iam, policy_arn):
     """
-    Given the IAM data for an account and the ARN for a policy, 
+    Given the IAM data for an account and the ARN for a policy,
     return the policy document
     """
     for policy in iam["Policies"]:

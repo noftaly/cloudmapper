@@ -35,7 +35,7 @@ class TestCommon(unittest.TestCase):
         account = get_account("demo")
 
         stats = get_account_stats(account, True)
-        assert_equal(stats["EC2 instances"]["us-east-1"], 3)
+        assert_equal(stats["EC2 instances"]["eu-west-3"], 3)
 
     def test_get_collection_date(self):
         account = get_account("demo")

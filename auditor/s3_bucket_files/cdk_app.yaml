@@ -4,7 +4,7 @@
 s3_bucket: MYCOMPANY-cloudmapper
 
 # SNS where alarms are sent
-alarm_sns_arn: "arn:aws:sns:us-east-1:000000000000:email"
+alarm_sns_arn: "arn:aws:sns:eu-west-3:000000000000:email"
 
 # IAM role that is assumed into in other accounts
 iam_role: CloudMapper

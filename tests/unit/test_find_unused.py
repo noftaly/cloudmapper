@@ -91,7 +91,7 @@ class TestFindUnused(TestCase):
                                     "VolumeId": "vol-1234",
                                 }
                             ],
-                            "AvailabilityZone": "us-east-1b",
+                            "AvailabilityZone": "eu-west-3b",
                             "CreateTime": "2019-03-21T21:03:04.345000+00:00",
                             "Encrypted": False,
                             "Iops": 300,
@@ -112,7 +112,7 @@ class TestFindUnused(TestCase):
                                     "VolumeId": "vol-2222",
                                 }
                             ],
-                            "AvailabilityZone": "us-east-1b",
+                            "AvailabilityZone": "eu-west-3b",
                             "CreateTime": "2019-03-21T21:03:04.345000+00:00",
                             "Encrypted": False,
                             "Iops": 300,
@@ -224,8 +224,8 @@ class TestFindUnused(TestCase):
                                 "InstanceOwnerId": "501673713797",
                                 "Status": "attached",
                             },
-                            "AvailabilityZone": "us-east-1f",
-                            "Description": "arn:aws:ecs:us-east-1:653711331788:attachment/ed8fed01-82d0-4bf6-86cf-fe3115c23ab8",
+                            "AvailabilityZone": "eu-west-3f",
+                            "Description": "arn:aws:ecs:eu-west-3:653711331788:attachment/ed8fed01-82d0-4bf6-86cf-fe3115c23ab8",
                             "Groups": [
                                 {"GroupId": "sg-00000008", "GroupName": "Public"}
                             ],

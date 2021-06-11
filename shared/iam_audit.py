@@ -11,7 +11,7 @@ from policyuniverse.policy import Policy
 from parliament import analyze_policy_string
 
 from netaddr import IPNetwork
-from shared.common import Finding, make_list, get_us_east_1, get_current_policy_doc
+from shared.common import Finding, make_list, get_eu_west_3, get_current_policy_doc
 from shared.query import query_aws, get_parameter_file
 from shared.nodes import Account, Region
 
@@ -143,7 +143,7 @@ def find_admins(accounts, args, findings):
     admins = []
     for account in accounts:
         account = Account(None, account)
-        region = get_us_east_1(account)
+        region = get_eu_west_3(account)
         admins.extend(
             find_admins_in_account(
                 region, findings, privs_to_look_for, include_restricted
@@ -179,7 +179,7 @@ def find_admins_in_account(
 
     try:
         file_name = "account-data/{}/{}/{}".format(
-            account.name, "us-east-1", "iam-get-account-authorization-details.json"
+            account.name, "eu-west-3", "iam-get-account-authorization-details.json"
         )
         iam = json.load(open(file_name))
     except:

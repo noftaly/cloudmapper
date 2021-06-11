@@ -292,7 +292,7 @@ def get_account_stats(account, all_resources=False):
 
             # S3 buckets require special code to identify their location
             if resource["name"] == "S3 buckets":
-                if region.name == "us-east-1":
+                if region.name == "eu-west-3":
                     buckets = pyjq.all(
                         ".Buckets[].Name",
                         query_aws(region.account, "s3-list-buckets", region),
@@ -306,7 +306,7 @@ def get_account_stats(account, all_resources=False):
                         # Convert the value to a name.
                         # See https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
                         if bucket_region is None:
-                            bucket_region = "us-east-1"
+                            bucket_region = "eu-west-3"
                         elif bucket_region == "EU":
                             bucket_region = "eu-west-1"
 
@@ -325,13 +325,13 @@ def get_account_stats(account, all_resources=False):
     return stats
 
 
-def get_us_east_1(account):
+def get_eu_west_3(account):
     for region_json in get_regions(account):
         region = Region(account, region_json)
-        if region.name == "us-east-1":
+        if region.name == "eu-west-3":
             return region
 
-    raise Exception("us-east-1 not found")
+    raise Exception("eu-west-3 not found")
 
 
 def iso_date(d):
@@ -352,7 +352,7 @@ def get_collection_date(account):
         account = Account(None, account)
     account_struct = account
     json_blob = query_aws(
-        account_struct, "iam-get-credential-report", get_us_east_1(account_struct)
+        account_struct, "iam-get-credential-report", get_eu_west_3(account_struct)
     )
     if not json_blob:
         raise Exception(
@@ -364,7 +364,7 @@ def get_collection_date(account):
 
 
 def get_access_advisor_active_counts(account, max_age=90):
-    region = get_us_east_1(account)
+    region = get_eu_west_3(account)
 
     json_account_auth_details = query_aws(
         region.account, "iam-get-account-authorization-details", region

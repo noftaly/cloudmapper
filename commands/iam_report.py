@@ -399,7 +399,7 @@ def iam_report(accounts, config, args):
 
     for region_json in get_regions(account):
         region = Region(account, region_json)
-        if region.name == "us-east-1":
+        if region.name == "eu-west-3":
             json_account_auth_details = query_aws(
                 region.account, "iam-get-account-authorization-details", region
             )

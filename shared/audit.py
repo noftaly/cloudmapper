@@ -1172,7 +1172,7 @@ def audit(accounts):
             region = Region(account, region_json)
 
             try:
-                if region.name == "us-east-1":
+                if region.name == "eu-west-3":
                     audit_s3_buckets(findings, region)
                     audit_cloudtrail(findings, region)
                     audit_iam(findings, region)

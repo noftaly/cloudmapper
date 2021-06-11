@@ -219,7 +219,7 @@ def get_public_nodes(account, config, use_cache=False):
     for region_json in get_regions(account):
         region = Region(account, region_json)
         # Look for CloudFront
-        if region.name == "us-east-1":
+        if region.name == "eu-west-3":
             json_blob = query_aws(
                 region.account, "cloudfront-list-distributions", region
             )
