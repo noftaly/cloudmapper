@@ -26,7 +26,10 @@
             "width": 5,
             "line-color": "#444",
             "curve-style": "unbundled-bezier",
-            "target-arrow-shape": "none",
+            "target-arrow-shape": "triangle",
+            "target-arrow-color": "#444",
+            "source-arrow-shape": "triangle",
+            "source-arrow-color": "#444",
             "label": " "
         }
     },
