@@ -243,8 +243,8 @@ function loadCytoscape(options, { dataPool }) {
     });
 
     $("#hideAllPorts").click(function (){
-        for (const [i, edge] of Object.entries(cy.edges())) {
-            cy.$(`#${edge._private.data.id}`).css({
+        for (const edge of Object.values(cy.edges())) {
+            cy.$(`#${edge._private?.data.id}`).css({
                 sourceLabel: ' ',
                 targetLabel: ' ',
             });
