@@ -262,12 +262,8 @@ def get_connections(cidrs, vpc, outputfilter):
                                 # Instance found that can connect to instances in the SG
                                 # So connect this instance (sourceInstance) to every instance
                                 # in the SG.
-                                for targetInstance in sg_to_instance_mapping.get(
-                                    sg["GroupId"], {}
-                                ):
-                                    add_connection(
-                                        connections, sourceInstance, targetInstance, sg
-                                    )
+                                for targetInstance in sg_to_instance_mapping.get(sg["GroupId"], {}):
+                                    add_connection(connections, sourceInstance, targetInstance, sg)
 
             else:
                 # This is an external IP (ie. not in a private range).
@@ -281,29 +277,19 @@ def get_connections(cidrs, vpc, outputfilter):
                             # Resource is not public, but allows anything to access it,
                             # so mark set all the resources in the VPC as allowing access to it.
                             for source_instance in vpc.leaves:
-                                add_connection(
-                                    connections, source_instance, instance, sg
-                                )
+                                add_connection(connections, source_instance, instance, sg)
 
         if outputfilter.get("internal_edges", True):
             # Connect allowed in Security Groups
-            for ingress_sg in pyjq.all(
-                ".IpPermissions[].UserIdGroupPairs[].GroupId", sg
-            ):
+            for ingress_sg in pyjq.all(".IpPermissions[].UserIdGroupPairs[].GroupId", sg):
                 # We have an SG and a list of SG's it allows in
                 for target in sg_to_instance_mapping.get(sg["GroupId"], {}):
                     # We have an instance and a list of SG's it allows in
                     for source in sg_to_instance_mapping.get(ingress_sg, {}):
                         if (
                             not outputfilter.get("inter_rds_edges", True)
-                            and (
-                                source.node_type == "rds"
-                                or source.node_type == "rds_rr"
-                            )
-                            and (
-                                target.node_type == "rds"
-                                or target.node_type == "rds_rr"
-                            )
+                            and (source.node_type == "rds" or source.node_type == "rds_rr")
+                            and (target.node_type == "rds" or target.node_type == "rds_rr")
                         ):
                             continue
                         add_connection(connections, source, target, sg)
@@ -571,16 +557,17 @@ def build_data_structure(account_data, config, outputfilter):
                 r.extend(reasons)
                 connections[c] = r
 
-    # Find connections that are two-ways
     connections_to_remove = set()
-    for c1, reasons in connections.items():
+    # Find connections that are two-ways
+    for c1, _ in connections.items():
         if c1 in connections_to_remove:
             continue
-        for c2, reasons in connections.items():
+        for c2, _ in connections.items():
             if c1.source == c2.target and c1.target == c2.source:
                 connections_to_remove.add(c2)
                 c1.is_double = True
                 break
+
     for connection in connections_to_remove:
         del connections[connection]
 
