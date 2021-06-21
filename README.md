@@ -63,8 +63,8 @@ collect the data, and run `make weball`
 account, collect the data and run `make weball`.
 
 It is possible that the collect step fails for some resources for the last two commands. As long as the resources are
-not important, then it is not important, but this means make will stop the process. You might need to run `make weball`
-on your own after that.
+not important, then it is not important, but this means make will stop the process. To prevent it from stopping the
+process, you can add the `-i` flag to the `make` command.
 
 ## The web interface
 
