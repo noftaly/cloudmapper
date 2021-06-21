@@ -213,7 +213,8 @@ def get_cidr_name(cidr, config):
 
 def add_connection(connections, source, target, reason):
     reasons = connections.get(Connection(source, target), [])
-    reasons.append(reason)
+    if not reason in reasons:
+        reasons.append(reason)
     connections[Connection(source, target)] = reasons
 
 
@@ -307,6 +308,22 @@ def get_connections(cidrs, vpc, outputfilter):
             del connections[connection]
 
     return connections
+
+
+def filter_connections(sg, match):
+    for i, perm_in in enumerate(sg['IpPermissions']):
+        source = perm_in['UserIdGroupPairs'][0] if len(perm_in['UserIdGroupPairs']) > 0 else perm_in['IpRanges'][0]
+        try:
+            if source['Description'] != match:
+                del sg['IpPermissions'][i]
+        except: pass
+
+    for i, perm_out in enumerate(sg['IpPermissionsEgress']):
+        source = perm_out['UserIdGroupPairs'][0] if len(perm_out['UserIdGroupPairs']) > 0 else perm_out['IpRanges'][0]
+        try:
+            if source['Description'] != match:
+                del sg['IpPermissionsEgress'][i]
+        except: pass
 
 
 def add_node_to_subnets(region, node, nodes):
@@ -417,6 +434,11 @@ def build_data_structure(account_data, config, outputfilter):
     for region_json in get_regions(account, outputfilter):
         region = Region(account, region_json)
         datapool['sgs'].extend(query_aws(account, "ec2-describe-security-groups", region)['SecurityGroups'])
+        if outputfilter['connections'] != 'all':
+            match = 'SIG' if outputfilter['connections'] == 'sig' else 'SSH'
+            for sg in datapool['sgs']:
+                filter_connections(sg, match)
+
 
         # Build the tree hierarchy
         for vpc_json in get_vpcs(region, outputfilter):
@@ -557,7 +579,22 @@ def build_data_structure(account_data, config, outputfilter):
                 r.extend(reasons)
                 connections[c] = r
 
+    # Filter by SIG or SSH
+    if outputfilter['connections'] != 'all':
+        match = 'SIG' if outputfilter['connections'] == 'sig' else 'SSH'
+        for _, reasons in connections.items():
+            for reason in reasons:
+                filter_connections(reason, match)
+
     connections_to_remove = set()
+    # Remove connections with no rules
+    for c, reasons in connections.items():
+        if all(
+            len(reason['IpPermissions']) == 0 and len(reason['IpPermissionsEgress']) == 0
+            for reason in reasons
+        ):
+            connections_to_remove.add(c)
+
     # Find connections that are two-ways
     for c1, _ in connections.items():
         if c1 in connections_to_remove:
@@ -723,6 +760,14 @@ def run(arguments):
         type=str,
     )
     parser.add_argument(
+        "--connections",
+        help="Which connections to show ('sig' or 'ssh' or 'all')",
+        required=False,
+        default="all",
+        type=str,
+        dest="connections"
+    )
+    parser.add_argument(
         "--tags",
         help="Filter nodes matching tags (ex. Name=batch,Env=prod), where the tag matches are AND'd together. Use this tag multiple times to OR sets (ex. --tags Env=prod --tags Env=Dev)",
         dest="tags",
@@ -829,6 +874,7 @@ def run(arguments):
     if args.tags:
         outputfilter["tags"] = args.tags
 
+    outputfilter["connections"] = args.connections
     outputfilter["internal_edges"] = args.internal_edges
     outputfilter["read_replicas"] = args.read_replicas
     outputfilter["inter_rds_edges"] = args.inter_rds_edges

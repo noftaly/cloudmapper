@@ -1,3 +1,5 @@
+connections=all
+
 setup:
 	pip install -r requirements.txt
 test:
@@ -12,7 +14,7 @@ collect:
 collecteu:
 	python3 cloudmapper.py collect --account $(account) --profile $(profile) --regions eu-west-3
 prepare:
-	python3 cloudmapper.py prepare --config config.json --account $(account) --internal-edges --inter-rds-edges
+	python3 cloudmapper.py prepare --config config.json --account $(account) --internal-edges --inter-rds-edges --connections $(connections)
 report:
 	python3 cloudmapper.py report --config config.json --account $(account)
 webserver:

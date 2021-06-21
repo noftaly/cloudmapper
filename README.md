@@ -49,6 +49,9 @@ that: `make cleancache files=file1,file2 account=AccountName`.
 Once you've collected all the data and it has been cache, you need to generate it for the frontend. A simple
 `make prepare account=AccountName` will suffice.
 
+If you want to prepare the data to only show SIG or SSH connections, you can add `connections=sig`
+(or `connections=ssh`) to the make command. Otherwise, it will default to `connections=all`.
+
 ### Start the webserver
 
 The last step is to boot the webserver up, with `make webserver`.
