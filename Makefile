@@ -17,6 +17,6 @@ report:
 	python3 cloudmapper.py report --config config.json --account $(account)
 webserver:
 	python3 cloudmapper.py webserver
-weball: prepare report webserver
+weball: prepare webserver
 remake: cleancache collect weball
 remakeall: cleancacheall collecteu weball

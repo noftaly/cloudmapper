@@ -53,10 +53,14 @@ Once you've collected all the data and it has been cache, you need to generate i
 
 The last step is to boot the webserver up, with `make webserver`.
 
+### Generate a report
+
+If you want, you can generate a little report with audits, charts etc. Run `make report account=AccountName`.
+
 ### Make shortcuts
 
 You can use make shortcuts to accelerate your process:
-- `make weball account=AccountName`: will prepare the data, generate a report and start the webserver
+- `make weball account=AccountName`: will prepare the data and start the webserver
 - `make remake files=xxx,xxx,xxx account=AccountName profile=AWSProfileName`: will remove the desired cache,
 collect the data, and run `make weball`
 - `make remakeall account=AccountName profile=AWSProfileName`: will remove all the cache associated to that
