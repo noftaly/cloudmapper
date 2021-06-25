@@ -485,10 +485,7 @@ def build_data_structure(account_data, config, outputfilter):
                         # Given ["Team","Dev"], see if it matches one of the tags in the node
                         if node.tags:
                             for tag in node.tags:
-                                if (
-                                    tag.get("Key", "") == pair[0]
-                                    and tag.get("Value", "") == pair[1]
-                                ):
+                                if tag.get("Key", "") == pair[0] and tag.get("Value", "") == pair[1]:
                                     condition_matches += 1
                     # We have a match if all of the conditions matched
                     if condition_matches == len(conditions):
@@ -528,9 +525,7 @@ def build_data_structure(account_data, config, outputfilter):
                                     cytoscape_json.append(subnet.cytoscape_data())
 
                                     for leaf in subnet.leaves:
-                                        cytoscape_json.append(
-                                            leaf.cytoscape_data(subnet.arn)
-                                        )
+                                        cytoscape_json.append(leaf.cytoscape_data(subnet.arn))
                                 else:
                                     az_children_to_remove.add(subnet)
                             for subnet in az_children_to_remove:
@@ -629,25 +624,16 @@ def build_data_structure(account_data, config, outputfilter):
 
         if len(matching_known_cidrs) > 0:
             # A match was found. Find the smallest matching range.
-            sorted_matches = sorted(
-                matching_known_cidrs.items(), key=operator.itemgetter(1)
-            )
+            sorted_matches = sorted(matching_known_cidrs.items(), key=operator.itemgetter(1))
             # Get first item to get (CIDR,size); and first item of that to get just the CIDR
             smallest_matched_cidr_string = sorted_matches[0][0]
-            smallest_matched_cidr_name = config["cidrs"][smallest_matched_cidr_string][
-                "name"
-            ]
+            smallest_matched_cidr_name = config["cidrs"][smallest_matched_cidr_string]["name"]
 
             # Check if we have a CIDR node that doesn't match the smallest one possible.
-            if (
-                cidrs[cidr_string].name
-                != config["cidrs"][smallest_matched_cidr_string]["name"]
-            ):
+            if cidrs[cidr_string].name != config["cidrs"][smallest_matched_cidr_string]["name"]:
                 # See if we need to create the larger known range
                 if cidrs.get(smallest_matched_cidr_string, "") == "":
-                    cidrs[smallest_matched_cidr_string] = Cidr(
-                        smallest_matched_cidr_string, smallest_matched_cidr_name
-                    )
+                    cidrs[smallest_matched_cidr_string] = Cidr(smallest_matched_cidr_string, smallest_matched_cidr_name)
 
                 # The existing CIDR node needs to be removed and rebuilt as the larger known range
                 del cidrs[cidr_string]
@@ -691,21 +677,10 @@ def build_data_structure(account_data, config, outputfilter):
     # Numbers chosen here are arbitrary
     MAX_NODES_FOR_WARNING = 200
     MAX_EDGES_FOR_WARNING = 500
-    if (
-        total_number_of_nodes > MAX_NODES_FOR_WARNING
-        or len(connections) > MAX_EDGES_FOR_WARNING
-    ):
-        log(
-            "WARNING: There are {} total nodes and {} total edges.".format(
-                total_number_of_nodes, len(connections)
-            )
-        )
-        log(
-            "  This will be difficult to display and may be too complex to make sense of."
-        )
-        log(
-            "  Consider reducing the number of items in the diagram by viewing a single"
-        )
+    if (total_number_of_nodes > MAX_NODES_FOR_WARNING or len(connections) > MAX_EDGES_FOR_WARNING):
+        log("WARNING: There are {} total nodes and {} total edges.".format(total_number_of_nodes, len(connections)))
+        log("  This will be difficult to display and may be too complex to make sense of.")
+        log("  Consider reducing the number of items in the diagram by viewing a single")
         log("   region, ignoring internal edges, or other filtering.")
 
     return cytoscape_json, datapool
