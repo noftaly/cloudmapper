@@ -1,7 +1,7 @@
 connections=all
 
 setup:
-	pip install -r requirements.txt
+	pip3 install -r requirements.txt
 test:
 	bash tests/scripts/unit_tests.sh
 

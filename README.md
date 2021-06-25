@@ -19,13 +19,12 @@ credentials.
 
 ### Create a CloudMapper account
 
-Duplicate the `./config.json.demo` file, at the root of this project. Fill in your account ID and your account name.
+Duplicate the `./config.json.demo` file and rename it to `./config.json`, at the root of this project. Fill in your
+account ID and your account name.
 
 ### Install dependencies
 
 You must then install the python dependencies. To do that, `cd` at the root of this project and run `make setup`.
-If on your computer, the `pip` command refers to python2 and not python3, you might need to do it manually with
-`pip3 install -r requirements.txt`.
 
 ## Start CloudMapper
 
