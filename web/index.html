@@ -44,6 +44,10 @@
         &nbsp;
         <b id="saveImage" class="fa fa-camera fa-lg tooltip"><span class="tooltiptext">Save as image</span></b>
         &nbsp;
+        <b id="connectionsAll" class="fas fa-arrows-alt-h fa-lg tooltip" onclick="prepareCytoscape('connectionsAll');"><span class="tooltiptext">Show all connections<br/>(redraws the whole graph)</span></b>
+        <b id="connectionsSig" class="fas fa-arrows-alt-h fa-lg tooltip" onclick="prepareCytoscape('connectionsSig');"><span class="tooltiptext">Show SIG connections<br/>(redraws the whole graph)</span></b>
+        <b id="connectionsSsh" class="fas fa-arrows-alt-h fa-lg tooltip" onclick="prepareCytoscape('connectionsSsh');"><span class="tooltiptext">Show SSH connections<br/>(redraws the whole graph)</span></b>
+        &nbsp;
         <b id="exportLayout" class="fa fa-download fa-lg tooltip"><span class="tooltiptext">Export</span></b>
         <label for="fileUpload"><b id="importLayout" style="display: inline-block;" class="fa fa-upload fa-lg tooltip"><span class="tooltiptext">Import</span></b></label>
         <input type="file" id="fileUpload" style="display: none;" onchange="importLayout()">

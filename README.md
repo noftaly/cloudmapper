@@ -20,7 +20,7 @@ credentials.
 ### Create a CloudMapper account
 
 Duplicate the `./config.json.demo` file and rename it to `./config.json`, at the root of this project. Fill in your
-account ID and your account name.
+account ID and your account name (you don't really care about the rest, leave it as is).
 
 ### Install dependencies
 
@@ -81,7 +81,10 @@ should not be displayed, you can click on it, and then click the "Hide" button (
 If you wish to display all the nodes and arrow again, click the "Show All" button next to it.\
 The next two buttons are to highlight all the selected node's neighbors.\
 You can then decide to collapse all the containers, or the selected containers.\
-The "plug"s icons are to show or hide all the ports.
+The "plug"s icons are to show or hide all the ports.\
+The double-arrows are there to change which connections are drawn: you can choose between "all", "SIG" and "SSH".
+:warning: Be aware that as this changes the dataset and not just the display, it redraws the whole graph and will remove any
+manual layout modification you've made
 
 If you wish to have more information about a node or an arrow, click on it, and then expand the little bar on the top
 right corner, and click on "Details". This will show you the JSON data associated with the node.

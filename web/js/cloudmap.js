@@ -35,6 +35,11 @@ $(window).on('load', function(){
     NProgress.set(0.1);
     akkordion(".akkordion", {});
 
+    prepareCytoscape();
+}); // Page loaded
+
+
+function prepareCytoscape(connectionType = 'connectionsAll') {
     $.when(
         $.getJSON("./data.json"),
         $.getJSON("./style.json")
@@ -42,7 +47,7 @@ $(window).on('load', function(){
         loadCytoscape({
             wheelSensitivity: 0.1,
             container: document.getElementById('cy'),
-            elements: datafile[0].cytoscape,
+            elements: datafile[0][connectionType].cytoscape,
             layout: {
                 name: 'cose-bilkent',
                 nodeDimensionsIncludeLabels: true,
@@ -50,17 +55,16 @@ $(window).on('load', function(){
                 tilingPaddingHorizontal: 100
             },
             style: stylefile[0]
-        }, datafile[0]);
+        }, datafile[0][connectionType].dataPool);
     })
     .fail(function(e) {
         if (e.status == 404) {
             alert("Failed to fetch data!\nPlease run cloudmapper.py prepare before using webserver");
         }
     });
-}); // Page loaded
+}
 
-
-function loadCytoscape(options, { dataPool }) {
+function loadCytoscape(options, dataPool) {
     NProgress.set(0.2);
     // Perform the layout
     var cy = window.cy = cytoscape(options);
