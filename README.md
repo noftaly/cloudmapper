@@ -85,3 +85,14 @@ The "plug"s icons are to show or hide all the ports.
 
 If you wish to have more information about a node or an arrow, click on it, and then expand the little bar on the top
 right corner, and click on "Details". This will show you the JSON data associated with the node.
+
+## Start with Terraform
+
+First, go into the `terraform` folder.
+You then have to put your credentials into `boot.sh`.
+- Line 5: you have to put your GitLab's username & token (only `read_repository` is necessary).
+- Lines 11-13: you also have to fill the AWS credentials.
+
+You can then init terraform with `terraform init`, and start it with `terraform apply`. You will have to wait a bit,
+for it to install packages, dependencies, repository, and collect and prepare the data. You can then connect to your
+server at port `8000`.
