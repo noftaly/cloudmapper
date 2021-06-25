@@ -1109,13 +1109,6 @@
         }
     },
     {
-        "selector": ".hiddenNeighbors",
-        "css": {
-            "border-width": 5,
-            "border-color": "#000"
-        }
-    },
-    {
         "selector": ".highlight",
         "css": {
             "width": 5,
