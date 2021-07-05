@@ -23,9 +23,49 @@ module "cloudmapper_sg" {
       cidr_blocks = join(",", var.whitelisted_cidrs)
     }
   ]
+  ingress_with_source_security_group_id = [
+    {
+      description              = "Traffic from ALB"
+      from_port                = 8000
+      to_port                  = 8000
+      protocol                 = "tcp"
+      source_security_group_id = module.alb_sg.security_group_id
+    }
+  ]
 
   tags = {
     Name = "${var.account_prefix}-sg"
+  }
+}
+
+module "alb_sg" {
+  source = "terraform-aws-modules/security-group/aws"
+
+  name   = "${var.account_prefix}-alb-sg"
+  vpc_id = module.vpc.vpc_id
+
+  egress_with_cidr_blocks = [
+    {
+      description = "All"
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+  ingress_with_cidr_blocks = [
+    {
+      description = "HTTP 8000 from internet"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+  tags = {
+    Name = "${var.account_prefix}-alb-sg"
   }
 }
 
