@@ -83,8 +83,8 @@ The next two buttons are to highlight all the selected node's neighbors.\
 You can then decide to collapse all the containers, or the selected containers.\
 The "plug"s icons are to show or hide all the ports.\
 The double-arrows are there to change which connections are drawn: you can choose between "all", "SIG" and "SSH".
-:warning: Be aware that as this changes the dataset and not just the display, it redraws the whole graph and will remove any
-manual layout modification you've made
+:warning: Be aware that as this changes the dataset and not just the display, it redraws the whole graph and will
+remove any manual layout modification you've made
 
 If you wish to have more information about a node or an arrow, click on it, and then expand the little bar on the top
 right corner, and click on "Details". This will show you the JSON data associated with the node.
@@ -92,10 +92,9 @@ right corner, and click on "Details". This will show you the JSON data associate
 ## Start with Terraform
 
 First, go into the `terraform` folder.
-You then have to put your credentials into `boot.sh`.
-- Line 5: you have to put your GitLab's username & token (only `read_repository` is necessary).
-- Lines 11-13: you also have to fill the AWS credentials.
+Fill in the cloudmapper.tfvars.json file, where you have to define all your variables. Descriptions are available at
+vars.tf
 
-You can then init terraform with `terraform init`, and start it with `terraform apply`. You will have to wait a bit,
-for it to install packages, dependencies, repository, and collect and prepare the data. You can then connect to your
-server at port `8000`.
+You can then init terraform with `terraform init`, and start it with
+`terraform apply -var-file ./cloudmapper.tfvars.json`. You will have to wait a bit, for it to install packages,
+dependencies, repository, and collect and prepare the data. You can then connect to your server through the ALB.
